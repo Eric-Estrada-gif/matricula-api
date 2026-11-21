@@ -17,7 +17,7 @@ public class ConsultarPerfil implements Task {
     }
 
     public static ConsultarPerfil deAdministracion() {
-        return new ConsultarPerfil("/api/admin/usuarios");
+        return new ConsultarPerfil("/api/usuarios");
     }
 
     @Override
