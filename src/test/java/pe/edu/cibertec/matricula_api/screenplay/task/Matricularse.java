@@ -26,13 +26,11 @@ public class Matricularse implements Task {
     @Override
     @Step("{0} matricula al alumno #alumno en el curso #curso")
     public <T extends Actor> void performAs(T actor) {
+        String access = actor.recall("accessToken");
         actor.attemptsTo(
                 Post.to("/api/matriculas")
-                        .with(req -> req.contentType(ContentType.JSON)
-                                .body(
-                                        Map.of("codigoAlumno", alumno, "codigoCurso", curso)
-                                )
-                        )
-        );
+                        .with(req -> req.header("Authorization", "Bearer " + access)
+                                .contentType(ContentType.JSON)
+                                .body(Map.of("codigoAlumno", alumno, "codigoCurso", curso))));
     }
 }

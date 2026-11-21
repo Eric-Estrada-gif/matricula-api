@@ -3,6 +3,10 @@ Feature: : Matricula de cursos
   Quiero matricularme en mis cursos
   Para llevarlos en el ciclo
 
+  Background:
+    Given que Pedro consulta la API de matricula
+    And inicia sesion con el usuario "i202610006" y la clave "Cibertec2026"
+
   Scenario: Matricula valida con descuento por promedio y anulacion
     Given  que Ana consulta la API de matricula
     When se matricula con el codigo "i202610001" en el curso "PS3511"

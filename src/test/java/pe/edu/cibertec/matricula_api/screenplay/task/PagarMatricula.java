@@ -1,10 +1,13 @@
 package pe.edu.cibertec.matricula_api.screenplay.task;
 
 import io.restassured.http.ContentType;
+import net.serenitybdd.annotations.Step;
 import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.rest.interactions.Patch;
 import net.serenitybdd.screenplay.rest.interactions.Post;
+import net.serenitybdd.screenplay.rest.questions.LastResponse;
 
 import java.util.Map;
 import static net.serenitybdd.screenplay.Tasks.instrumented;
@@ -21,13 +24,15 @@ public class PagarMatricula implements Task {
     }
 
     @Override
+    @Step("{0} paga la matricula con el metodo #metodo")
     public <T extends Actor> void performAs(T actor) {
-        String id = SerenityRest.lastResponse().jsonPath().getString("id");
+        String access = actor.recall("accessToken");
+        String id = actor.asksFor(LastResponse.received()).jsonPath().getString("id");
+
         actor.attemptsTo(
-                Post.to("api/matriculas/{id}/pagar")
-                        .with(req -> req.pathParam("id", id)
+                Patch.to("/api/matriculas/" + id + "/pagar")
+                        .with(req -> req.header("Authorization", "Bearer " + access)
                                 .contentType(ContentType.JSON)
-                                .body(Map.of("metodoPago", metodo)))
-        );
+                                .body(Map.of("metodoPago", metodo))));
     }
 }
