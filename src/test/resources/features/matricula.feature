@@ -26,3 +26,28 @@ Feature: : Matricula de cursos
       | cruce de horario   | i202610002 | QA5517 | 409    | CRUCE_HORARIO        |
       | límite de créditos | i202610005 | TS5514 | 422    | LIMITE_CREDITOS      |
       | alumno inexistente | i999999999 | PS5511 | 404    | ALUMNO_NO_ENCONTRADO |
+
+
+    Scenario: Cotizar el curso
+    When cotiza el curso "DM5512"
+    Then el codigo de respuesta 200
+    And los creditos son 4
+    And el subtotal es 480
+    And el descuento es 0
+    And el total es 480
+
+    Scenario: Matricularse y pagar el curso
+    When se matricula en el curso "DM5512"
+    Then el codigo de respuesta es 201
+    And el estado de la matricula es "REGISTRADA"
+    And el monto de la matricula es 480
+    When paga la matricula con el metodo "TRANSFERENCIA"
+    Then el codigo de respuesta es 200
+    And el estado de la matricula es "PAGADA"
+    And la fecha de apgo tiene valor
+    And el pago de la matricula tiene el metodo "TRANSFERENCIA" y un numero de operacion "OP-000016"
+
+    Scenario: No puede matricularse sin el prerrequisito
+    When se matricula en el curso "QA5517"
+    Then el codigo de respuesta es 422
+    And el codigo de error es "PRERREQUISITO_PENDIENTE"
